@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -119,7 +118,9 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 
 	// must have at least one policy
 	if len(payload.Policies) == 0 {
-		http.Error(resWriter, "one or more vault policies are required", http.StatusBadRequest)
+		resWriter.Header().Set("Content-Type", "application/json")
+		resWriter.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "error", Msg: "one or more vault policies are required"})
 		return
 
 		// otherwise lets proceed
@@ -130,16 +131,25 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 		// use to create the actual orphan token
 		userToken, err := authenticator.Auth(vaultCredentials)
 		if err != nil {
-			http.Error(resWriter, err.Error(), http.StatusUnauthorized)
+			log.Error("Failed to authenticated againsg vault w/ VaultCredentials: " + err.Error())
+			resWriter.Header().Set("Content-Type", "application/json")
+			resWriter.WriteHeader(http.StatusUnauthorized)
+			json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "error", Msg: err.Error()})
+			return
 		}
 
 		token, err := createOrphanToken(userToken, payload)
 		if err != nil {
-			log.Info(err)
+			log.Error("Failed to create orphan token: " + err.Error())
+			resWriter.Header().Set("Content-Type", "application/json")
+			resWriter.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "error", Msg: err.Error()})
+			return
 		}
 
+		resWriter.Header().Set("Content-Type", "application/json")
 		resWriter.WriteHeader(http.StatusOK)
-		fmt.Fprintf(resWriter, "token: %s\n", token)
+		json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "ok", Token: token, Msg: ""})
 	}
 
 }

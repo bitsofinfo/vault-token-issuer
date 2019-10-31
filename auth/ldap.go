@@ -70,7 +70,7 @@ func (l *LdapPlugin) Auth(credential VaultCredentials) (string, error) {
 		bodyString := string(bodyBytes)
 		clientToken = gjson.Get(bodyString, "auth.client_token").String()
 	} else {
-		return "", errors.New("Invalid authentication: " + string(resp.StatusCode))
+		return "", errors.New("Vault authentication failed: " + http.StatusText(resp.StatusCode))
 	}
 
 	return clientToken, nil
