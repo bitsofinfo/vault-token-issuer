@@ -7,7 +7,7 @@
 // Generate a self-signed X.509 certificate for a TLS server. Outputs to
 // 'cert.pem' and 'key.pem' and will overwrite existing files.
 
-package main
+package util
 
 import (
 	"bytes"
@@ -32,7 +32,7 @@ func publicKey(priv interface{}) interface{} {
 	}
 }
 
-func generate(rsaBits int) ([]byte, []byte) {
+func Generate(rsaBits int) ([]byte, []byte) {
 
 	host := "github.bitsofinfo.vaultokenissuer" // Comma-separated hostnames and IPs to generate a certificate for
 	validFrom := ""                             // now
