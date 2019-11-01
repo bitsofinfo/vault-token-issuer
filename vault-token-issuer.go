@@ -186,7 +186,7 @@ func extractCreateTokenPayload(resWriter *http.ResponseWriter, req *http.Request
 	// validate
 	_, err = govalidator.ValidateStruct(&payload)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("JSON payload failed validation: " + err.Error())
 	}
 
 	return &payload, nil
