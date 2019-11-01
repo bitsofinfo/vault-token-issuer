@@ -32,7 +32,7 @@ var (
 type createTokenPayload struct {
 	Renewable bool     `valid:"required" json:"renewable"`
 	Period    string   `valid:"alphanum,required" json:"period"`
-	Policies  []string `valid:"alphanum,required" json:"policies"`
+	Policies  []string `valid:"ascii,required" json:"policies"`
 }
 
 // Struct for JSON we retun to caller
