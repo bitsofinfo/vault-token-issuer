@@ -73,10 +73,11 @@ func main() {
 
 	// setup our routes
 	router := mux.NewRouter()
-	//router.Methods("POST")
-	//router.Schemes("https")
-	//router.Headers("Content-Type", "application/json")
-	router.HandleFunc("/token/create-orphan", CreateOrphanTokenHandler)
+	router.Path("/token/create-orphan").
+		Methods("POST").
+		Schemes("https").
+		Headers("Content-Type", "application/json").
+		HandlerFunc(CreateOrphanTokenHandler)
 
 	// fire up the server
 	srv := &http.Server{
@@ -90,17 +91,6 @@ func main() {
 	log.Fatal(srv.ListenAndServeTLS("", ""))
 }
 
-func genResponse(code string, token string, msg string) (jsonStr string) {
-	bytes, err := json.Marshal(createTokenResponse{Code: code, Token: token, Msg: msg})
-	if err != nil {
-		msg := "Unexpected error in genResponse() " + err.Error() + " orig: " + msg
-		log.Error(msg)
-		return genResponse("error", "", msg)
-	}
-
-	return string(bytes)
-}
-
 func writeHttpResponse(resWriter http.ResponseWriter, code string, token string, msg string, httpStatus int) {
 	resWriter.Header().Set("Content-Type", "application/json")
 	resWriter.WriteHeader(httpStatus)
@@ -112,14 +102,15 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 	// first lets get the credentials off the request
 	vaultCredentials, err := authenticator.GetCredentials(req)
 	if err != nil {
-		http.Error(resWriter, genResponse("error", "", "Bad Request: auth required"), http.StatusBadRequest)
+		writeHttpResponse(resWriter, "error", "", "Bad Request: auth required", http.StatusBadRequest)
 		return
 	}
 
 	// lets get our createTokenPayload struct
 	payload, err := extractCreateTokenPayload(&resWriter, req)
 	if err != nil {
-		http.Error(resWriter, err.Error(), http.StatusBadRequest)
+		log.Error("Invalid payload: " + err.Error())
+		writeHttpResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
 		return
 	}
 
