@@ -65,15 +65,6 @@ func main() {
 		log.Fatal("Invalid --vault-authenticator specified. We only support 'ldap'")
 	}
 
-	// generate a self signed cert & key
-	pemCert, pemKey := util.Generate(4096)
-
-	// get cert from keypair
-	cert, err := tls.X509KeyPair(pemCert, pemKey)
-	if err != nil {
-		log.Fatal("Unexpected error generating self signed cert", err)
-	}
-
 	// setup our REST routes
 	router := mux.NewRouter()
 	router.Path("/token/create-orphan").
@@ -91,7 +82,7 @@ func main() {
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 
 		TLSConfig: &tls.Config{
-			Certificates:             []tls.Certificate{cert},
+			Certificates:             []tls.Certificate{getTLSCertificate()},
 			MinVersion:               tls.VersionTLS12,
 			PreferServerCipherSuites: true,
 			CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
@@ -106,6 +97,19 @@ func main() {
 	}
 
 	log.Fatal(srv.ListenAndServeTLS("", ""))
+}
+
+func getTLSCertificate() tls.Certificate {
+	// generate a self signed cert & key
+	pemCert, pemKey := util.Generate(4096)
+
+	// get cert from keypair
+	cert, err := tls.X509KeyPair(pemCert, pemKey)
+	if err != nil {
+		log.Fatal("Unexpected error generating self signed cert", err)
+	}
+
+	return cert
 }
 
 func writeHttpResponse(resWriter http.ResponseWriter, code string, token string, msg string, httpStatus int) {
