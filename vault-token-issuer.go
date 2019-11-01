@@ -12,6 +12,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/bitsofinfo/vault-token-issuer/auth"
 	"github.com/bitsofinfo/vault-token-issuer/util"
 	log "github.com/sirupsen/logrus"
@@ -29,9 +30,9 @@ var (
 // the JSON payload we both consume
 // from callers and relay to Vault
 type createTokenPayload struct {
-	Renewable bool     `json:"renewable"`
-	Period    string   `json:"period"`
-	Policies  []string `json:"policies"`
+	Renewable bool     `valid:"required" json:"renewable"`
+	Period    string   `valid:"alphanum,required" json:"period"`
+	Policies  []string `valid:"alphanum,required" json:"policies"`
 }
 
 // Struct for JSON we retun to caller
@@ -178,7 +179,14 @@ func extractCreateTokenPayload(resWriter *http.ResponseWriter, req *http.Request
 	x, err := json.Marshal(&payload)
 	log.Info(string(x))
 
+	// validate
+	_, err = govalidator.ValidateStruct(&payload)
+	if err != nil {
+		return nil, err
+	}
+
 	return &payload, nil
+
 }
 
 func createOrphanToken(userToken string, payload *createTokenPayload) (string, error) {
