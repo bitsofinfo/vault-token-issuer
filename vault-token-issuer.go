@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -28,7 +29,7 @@ var (
 // the JSON payload we both consume
 // from callers and relay to Vault
 type createTokenPayload struct {
-	Renewable string   `json:"renewable"`
+	Renewable bool     `json:"renewable"`
 	Period    string   `json:"period"`
 	Policies  []string `json:"policies"`
 }
@@ -100,6 +101,12 @@ func genResponse(code string, token string, msg string) (jsonStr string) {
 	return string(bytes)
 }
 
+func writeHttpResponse(resWriter http.ResponseWriter, code string, token string, msg string, httpStatus int) {
+	resWriter.Header().Set("Content-Type", "application/json")
+	resWriter.WriteHeader(httpStatus)
+	json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: code, Token: token, Msg: msg})
+}
+
 func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) {
 
 	// first lets get the credentials off the request
@@ -118,9 +125,7 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 
 	// must have at least one policy
 	if len(payload.Policies) == 0 {
-		resWriter.Header().Set("Content-Type", "application/json")
-		resWriter.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "error", Msg: "one or more vault policies are required"})
+		writeHttpResponse(resWriter, "error", "", "one or more vault 'policies' are required", http.StatusBadRequest)
 		return
 
 		// otherwise lets proceed
@@ -132,24 +137,22 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 		userToken, err := authenticator.Auth(vaultCredentials)
 		if err != nil {
 			log.Error("Failed to authenticated againsg vault w/ VaultCredentials: " + err.Error())
-			resWriter.Header().Set("Content-Type", "application/json")
-			resWriter.WriteHeader(http.StatusUnauthorized)
-			json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "error", Msg: err.Error()})
+			writeHttpResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
 			return
 		}
 
 		token, err := createOrphanToken(userToken, payload)
 		if err != nil {
 			log.Error("Failed to create orphan token: " + err.Error())
-			resWriter.Header().Set("Content-Type", "application/json")
-			resWriter.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "error", Msg: err.Error()})
+			writeHttpResponse(resWriter, "error", "", err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		resWriter.Header().Set("Content-Type", "application/json")
-		resWriter.WriteHeader(http.StatusOK)
-		json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: "ok", Token: token, Msg: ""})
+		writeHttpResponse(resWriter, "ok", token,
+			fmt.Sprintf("renewable:%v period:%v policies:%v",
+				payload.Renewable,
+				payload.Period,
+				payload.Policies), http.StatusOK)
 	}
 
 }
