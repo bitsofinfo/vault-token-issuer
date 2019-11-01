@@ -21,9 +21,9 @@ import (
 )
 
 var (
-	vaultUrl           string
-	vaultAuthenticator string
-	authenticator      auth.VaultAuthenticator
+	vaultUrl           string                  // vault URL (flag opt)
+	vaultAuthenticator string                  // string vault auth plugin name (flag opt)
+	authenticator      auth.VaultAuthenticator // the vault auth plugin
 )
 
 // the JSON payload we both consume
@@ -45,7 +45,7 @@ func init() {
 
 	// cmd line args
 	flag.StringVar(&vaultUrl, "vault-url", "", "Vault url where token API calls will be made.")
-	flag.StringVar(&vaultAuthenticator, "vault-authenticator", "", "The vault authenticator to use, options: 'ldap'")
+	flag.StringVar(&vaultAuthenticator, "vault-authenticator", "", "The vault authenticator plugin to use: valid options: 'ldap'")
 
 	// logging options
 	log.SetFormatter(&log.JSONFormatter{})
@@ -57,21 +57,23 @@ func main() {
 
 	flag.Parse()
 
+	// load our plugin for the authentication backend
 	if vaultAuthenticator == "ldap" {
 		authenticator = &auth.LdapPlugin{VaultUrl: vaultUrl}
 	} else {
 		log.Fatal("Invalid --vault-authenticator specified. We only support 'ldap'")
 	}
 
-	// generate a self signed cert
+	// generate a self signed cert & key
 	pemCert, pemKey := util.Generate(4096)
 
+	// get cert from keypair
 	cert, err := tls.X509KeyPair(pemCert, pemKey)
 	if err != nil {
 		log.Fatal("Unexpected error generating self signed cert", err)
 	}
 
-	// setup our routes
+	// setup our REST routes
 	router := mux.NewRouter()
 	router.Path("/token/create-orphan").
 		Methods("POST").
@@ -79,11 +81,25 @@ func main() {
 		Headers("Content-Type", "application/json").
 		HandlerFunc(CreateOrphanTokenHandler)
 
-	// fire up the server
+	// fire up the http server
 	srv := &http.Server{
-		Handler:      router,
-		Addr:         ":8443",
-		TLSConfig:    &tls.Config{Certificates: []tls.Certificate{cert}},
+		Handler: router,
+		Addr:    ":8443",
+
+		// https://golang.org/doc/go1.6#http2 needed to disable 128b ciphers below which are required by h2
+		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
+
+		TLSConfig: &tls.Config{
+			Certificates:             []tls.Certificate{cert},
+			MinVersion:               tls.VersionTLS12,
+			PreferServerCipherSuites: true,
+			CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+				tls.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+			}},
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
