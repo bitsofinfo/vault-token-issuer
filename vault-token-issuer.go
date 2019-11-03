@@ -147,7 +147,7 @@ func getTLSCertificate() tls.Certificate {
 			log.Fatal("Unexpected error generating self signed cert", err)
 		}
 
-		log.Info("Succesfully generated self-signed TLS cert/key")
+		log.Info("Successfully generated self-signed TLS cert/key")
 
 		return cert
 	}
@@ -155,7 +155,7 @@ func getTLSCertificate() tls.Certificate {
 }
 
 // writes an HTTP response w/ code + json result
-func writeHttpResponse(resWriter http.ResponseWriter, code string, token string, msg string, httpStatus int) {
+func writeHTTPResponse(resWriter http.ResponseWriter, code string, token string, msg string, httpStatus int) {
 	resWriter.Header().Set("Content-Type", "application/json")
 	resWriter.WriteHeader(httpStatus)
 	json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: code, Token: token, Msg: msg})
@@ -176,7 +176,7 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 	// first lets get the credentials off the request
 	vaultCredentials, err := authenticator.GetCredentials(req)
 	if err != nil {
-		writeHttpResponse(resWriter, "error", "", "Bad Request: auth required", http.StatusBadRequest)
+		writeHTTPResponse(resWriter, "error", "", "Bad Request: auth required", http.StatusBadRequest)
 		return
 	}
 
@@ -184,13 +184,13 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 	payload, err := extractCreateTokenPayload(&resWriter, req)
 	if err != nil {
 		log.Error("Invalid payload: " + err.Error())
-		writeHttpResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
+		writeHTTPResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	// must have at least one policy
 	if len(payload.Policies) == 0 {
-		writeHttpResponse(resWriter, "error", "", "one or more vault 'policies' are required", http.StatusBadRequest)
+		writeHTTPResponse(resWriter, "error", "", "one or more vault 'policies' are required", http.StatusBadRequest)
 		return
 
 		// otherwise lets proceed
@@ -202,18 +202,18 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 		userToken, err := authenticator.Auth(vaultCredentials)
 		if err != nil {
 			log.Error("Failed to authenticated againsg vault w/ VaultCredentials: " + err.Error())
-			writeHttpResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
+			writeHTTPResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
 			return
 		}
 
 		token, err := createOrphanToken(userToken, payload)
 		if err != nil {
 			log.Error("Failed to create orphan token: " + err.Error())
-			writeHttpResponse(resWriter, "error", "", err.Error(), http.StatusInternalServerError)
+			writeHTTPResponse(resWriter, "error", "", err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		writeHttpResponse(resWriter, "ok", token,
+		writeHTTPResponse(resWriter, "ok", token,
 			fmt.Sprintf("renewable:%v period:%v policies:%v",
 				payload.Renewable,
 				payload.Period,
