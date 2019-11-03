@@ -14,12 +14,12 @@ Use cases:
 
 ## Basic example
 
-1) Launch the `vault-token-issuer`
+### Launch the `vault-token-issuer`
 ```
 vault-token-issuer -vault-url [VAULT_URL] -vault-authenticator [PLUGIN ('ldap')]
 ```
 
-1) Make a POST to generate an orphan token:
+### Make a POST to generate an orphan token:
 ```
 curl -X POST \
   https://<vault-token-issuer-url>/token/create-orphan \
