@@ -136,21 +136,20 @@ func getTLSCertificate() tls.Certificate {
 		log.Info("Loaded TLS cert/key from " + tlsCertPath + " " + tlsKeyPath)
 
 		return cert
-
-	} else {
-		// generate a self signed cert & key
-		pemCert, pemKey := util.Generate(4096)
-
-		// get cert from keypair
-		cert, err := tls.X509KeyPair(pemCert, pemKey)
-		if err != nil {
-			log.Fatal("Unexpected error generating self signed cert", err)
-		}
-
-		log.Info("Successfully generated self-signed TLS cert/key")
-
-		return cert
 	}
+
+	// generate a self signed cert & key
+	pemCert, pemKey := util.Generate(4096)
+
+	// get cert from keypair
+	cert, err := tls.X509KeyPair(pemCert, pemKey)
+	if err != nil {
+		log.Fatal("Unexpected error generating self signed cert", err)
+	}
+
+	log.Info("Successfully generated self-signed TLS cert/key")
+
+	return cert
 
 }
 
@@ -192,33 +191,30 @@ func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) 
 	if len(payload.Policies) == 0 {
 		writeHTTPResponse(resWriter, "error", "", "one or more vault 'policies' are required", http.StatusBadRequest)
 		return
-
-		// otherwise lets proceed
-	} else {
-
-		// auth the actual user against value and get
-		// the client access/auth token which we can then
-		// use to create the actual orphan token
-		userToken, err := authenticator.Auth(vaultCredentials)
-		if err != nil {
-			log.Error("Failed to authenticated againsg vault w/ VaultCredentials: " + err.Error())
-			writeHTTPResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
-			return
-		}
-
-		token, err := createOrphanToken(userToken, payload)
-		if err != nil {
-			log.Error("Failed to create orphan token: " + err.Error())
-			writeHTTPResponse(resWriter, "error", "", err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		writeHTTPResponse(resWriter, "ok", token,
-			fmt.Sprintf("renewable:%v period:%v policies:%v",
-				payload.Renewable,
-				payload.Period,
-				payload.Policies), http.StatusOK)
 	}
+
+	// auth the actual user against value and get
+	// the client access/auth token which we can then
+	// use to create the actual orphan token
+	userToken, err := authenticator.Auth(vaultCredentials)
+	if err != nil {
+		log.Error("Failed to authenticated againsg vault w/ VaultCredentials: " + err.Error())
+		writeHTTPResponse(resWriter, "error", "", err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	token, err := createOrphanToken(userToken, payload)
+	if err != nil {
+		log.Error("Failed to create orphan token: " + err.Error())
+		writeHTTPResponse(resWriter, "error", "", err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeHTTPResponse(resWriter, "ok", token,
+		fmt.Sprintf("renewable:%v period:%v policies:%v",
+			payload.Renewable,
+			payload.Period,
+			payload.Policies), http.StatusOK)
 
 }
 

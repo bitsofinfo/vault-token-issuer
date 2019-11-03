@@ -80,6 +80,7 @@ func (l *LdapPlugin) Auth(credential VaultCredentials) (string, error) {
 
 }
 
+// GetCredentials ...
 func (l *LdapPlugin) GetCredentials(req *http.Request) (VaultCredentials, error) {
 
 	// we require basic auth
