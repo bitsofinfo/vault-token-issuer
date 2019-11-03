@@ -32,6 +32,7 @@ func publicKey(priv interface{}) interface{} {
 	}
 }
 
+// Generate ...
 func Generate(rsaBits int) ([]byte, []byte) {
 
 	host := "github.bitsofinfo.vaultokenissuer" // Comma-separated hostnames and IPs to generate a certificate for
