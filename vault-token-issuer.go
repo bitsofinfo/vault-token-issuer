@@ -65,6 +65,12 @@ func main() {
 		log.Fatal("Invalid --vault-authenticator specified. We only support 'ldap'")
 	}
 
+	/*var fs http.FileSystem = http.Dir("spa/build")
+	err := vfsgen.Generate(fs, vfsgen.Options{})
+	if err != nil {
+		log.Fatalln(err)
+	}*/
+
 	// setup our REST routes
 	router := mux.NewRouter()
 	router.Path("/token/create-orphan").
@@ -72,6 +78,13 @@ func main() {
 		Schemes("https").
 		Headers("Content-Type", "application/json").
 		HandlerFunc(CreateOrphanTokenHandler)
+
+	router.Path("/token/create-orphan").
+		Methods("OPTIONS").
+		Schemes("https").
+		HandlerFunc(CORSHandler)
+
+	//router.PathPrefix("/ui/").Methods("GET").Handler(http.StripPrefix("/ui/", http.FileServer(assets)))
 
 	// fire up the http server
 	srv := &http.Server{
@@ -118,7 +131,15 @@ func writeHttpResponse(resWriter http.ResponseWriter, code string, token string,
 	json.NewEncoder(resWriter).Encode(&createTokenResponse{Code: code, Token: token, Msg: msg})
 }
 
+func CORSHandler(resWriter http.ResponseWriter, req *http.Request) {
+	resWriter.Header().Set("Access-Control-Allow-Origin", "*")
+	resWriter.Header().Set("Access-Control-Allow-Headers", "content-type,authorization")
+	resWriter.Header().Set("Access-Control-Allow-Methods", "OPTIONS,POST")
+}
+
 func CreateOrphanTokenHandler(resWriter http.ResponseWriter, req *http.Request) {
+
+	CORSHandler(resWriter, req)
 
 	// first lets get the credentials off the request
 	vaultCredentials, err := authenticator.GetCredentials(req)
