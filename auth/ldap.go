@@ -19,21 +19,24 @@ func init() {
 	log.SetLevel(log.DebugLevel)
 }
 
+// LdapPlugin ..
 type LdapPlugin struct {
 	Credentials VaultCredentials
-	VaultUrl    string
+	VaultURL    string
 }
 
+// LdapCredentials ...
 type LdapCredentials struct {
 	Username string
 	Password string
 }
 
-// LdapCredentials just returns itself on calls to Get()
+// Get ... just returns itself on calls to Get()
 func (l LdapCredentials) Get() (interface{}, error) {
 	return l, nil
 }
 
+// Auth ...
 func (l *LdapPlugin) Auth(credential VaultCredentials) (string, error) {
 
 	// verify the passed creds are LdapCredentials
@@ -49,7 +52,7 @@ func (l *LdapPlugin) Auth(credential VaultCredentials) (string, error) {
 	log.Info(jsonBytes.String())
 
 	client := &http.Client{}
-	url := (l.VaultUrl + "/v1/auth/ldap/login/" + ldapCreds.Username)
+	url := (l.VaultURL + "/v1/auth/ldap/login/" + ldapCreds.Username)
 	log.Info(url)
 	req, err := http.NewRequest("POST", url, jsonBytes)
 	req.Header.Set("Content-Type", "application/json")

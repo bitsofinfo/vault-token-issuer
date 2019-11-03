@@ -1,4 +1,9 @@
 vault-token-issuer
+vault-token-issuer_*
+build_spa_vfsgen
+
+*.crt
+*.key
 
 # Binaries for programs and plugins
 *.exe
