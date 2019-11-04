@@ -73,5 +73,3 @@ go build
 
 The included gui is implemented in React and available at `/ui` if enabled via `--enable-spa true|false`. More information in the [SPA README](spa/README.md)
 
-![](doc/spa.png) 
-
