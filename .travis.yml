@@ -1,6 +1,9 @@
 # .travis.yml
 language: go
 
+go:
+- 1.13.x
+
 addons:
   apt:
     packages:
