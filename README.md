@@ -1,5 +1,7 @@
 # vault-token-issuer
 
+<img src="doc/spa.png" align="right">
+
 This project provides a simplified proxy/facade for [Vault's /auth/token/create-orphan API](https://www.vaultproject.io/api/auth/token/index.html).
 
 This is **not** a straight layer 7 passthrough proxy, but rather this exposes a simplified API to create orphan tokens that will be created under the authority of the identity specified in an `Authentication` header who's contents can vary based on the `plugin` used when launching `vault-token-issuer`.
@@ -11,8 +13,6 @@ Use cases:
 * Continuous integration & delivery workflows that only need to generate use-case specific tokens 
 * Limit direct/full exposure to Vault on a network
 * Provide a restricted gateway to Vault's `/auth/token/create-orphan` API
-
-<img src="doc/spa.png" align="right">
 
 ## Basic example
 
