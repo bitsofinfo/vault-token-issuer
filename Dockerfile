@@ -13,8 +13,7 @@ RUN go mod download
 COPY . .
 
 RUN cd spa && \
-     npm install react-scripts -g --silent && \ 
-     NODE_PATH=node_modules yarn start && \
+     npm install react-scripts -g --silent && \
      cd ..
 
 RUN go generate
