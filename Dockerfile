@@ -6,6 +6,9 @@ RUN echo GIT_TAG=${GIT_TAG}
 
 RUN apk add --update nodejs npm yarn bash
 
+# without this we get `/bin/sh: react-scripts: not found`
+RUN npm install react-scripts -g --silent
+
 WORKDIR /opt/app
 COPY go.mod go.sum ./
 RUN go mod download
