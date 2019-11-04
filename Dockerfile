@@ -12,9 +12,10 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-# without this we get `/bin/sh: react-scripts: not found`
-RUN npm install react-scripts -g --silent
-RUN NODE_PATH=node_modules yarn start
+RUN cd spa && \
+     npm install react-scripts -g --silent && \ 
+     NODE_PATH=node_modules yarn start && \
+     cd ..
 
 RUN go generate
 RUN CGO_ENABLED=0 GOOS=linux go build
