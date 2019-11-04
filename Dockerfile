@@ -12,9 +12,9 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 
-RUN cd spa && \
-     npm install react-scripts -g --silent && \
-     cd ..
+#RUN cd spa && \
+#     npm install react-scripts -g --silent && \
+#     cd ..
 
 RUN go generate
 RUN CGO_ENABLED=0 GOOS=linux go build
