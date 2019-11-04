@@ -1,5 +1,8 @@
 FROM golang:1.13.4-alpine3.10 as builder
 
+ARG GIT_TAG=master
+
+RUN echo GIT_TAG=${GIT_TAG}
 
 RUN apk add --update nodejs npm yarn bash
 
