@@ -47,22 +47,28 @@ func (l *LdapPlugin) Auth(credential VaultCredentials) (string, error) {
 
 	// create our POST payload for the login
 	jsonData, err := json.Marshal(map[string]string{"password": ldapCreds.Password})
+	if err != nil {
+		return "", errors.New("LdapPlugin.Auth() plugin error marshalling VaultCredentials: " + err.Error())
+	}
+
+	// convert to bytes
 	jsonBytes := bytes.NewBuffer(jsonData)
 
-	log.Info(jsonBytes.String())
-
+	// new http client
 	client := &http.Client{}
 	url := (l.VaultURL + "/v1/auth/ldap/login/" + ldapCreds.Username)
-	log.Info(url)
+
+	// sending POST for the VaultCredentials
+	log.Info("LdapPlugin authenticating for: " + url)
 	req, err := http.NewRequest("POST", url, jsonBytes)
 	req.Header.Set("Content-Type", "application/json")
 	resp, err := client.Do(req)
-
 	if err != nil {
 		return "", errors.New("LdapPlugin.Auth() plugin error error logging into vault: " + err.Error())
 	}
 	defer resp.Body.Close()
 
+	// get the clientToken
 	var clientToken string
 
 	if resp.StatusCode == http.StatusOK {

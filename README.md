@@ -8,9 +8,9 @@ In addition to a simple REST API it also provides a simple SPA for creating orph
 
 Use cases:
 
-* Continuous integration & delivery workflows
-* Limit direct exposure to Vault on a network
-* Limit full access to all Vault apis
+* Continuous integration & delivery workflows that only need to generate use-case specific tokens 
+* Limit direct/full exposure to Vault on a network
+* Provide a restricted gateway to Vault's `/auth/token/create-orphan` API
 
 ## Basic example
 
@@ -40,7 +40,7 @@ curl -X POST \
 
 4) Upon success of the previous call, the generated orphan token is returned to the caller in a response JSON payload.
 
-5) By default an SPA is available at `/ui` and a self-signed TLS cert is generated. See usage for options around both of these.
+5) By default an SPA is available at `/ui` and a self-signed TLS cert is generated. See usage for options around both of these. Note the SPA React app is statically built into the binary via [vfsgen](https://github.com/shurcooL/vfsgen)
 
 ## Usage
 

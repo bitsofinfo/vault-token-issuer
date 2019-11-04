@@ -32,7 +32,7 @@ class CreateTokenForm extends React.Component {
           this.setState({policies: event.target.value.split("\n")});
 
         } else if (event.target.id === 'renewable') {
-          this.setState({renewable: Boolean(event.target.value)});
+          this.setState({renewable: (event.target.value === 'true' ? true : false)});
 
         } else if (event.target.id === 'period') {
           this.setState({period: event.target.value});
@@ -41,7 +41,7 @@ class CreateTokenForm extends React.Component {
 
     postTokenCreateOrphan() {
 
-        axios.post('https://localhost:8443/token/create-orphan', 
+        axios.post((process.env.REACT_APP_VAULT_TOKEN_ISSUER_ROOT_URL+'/token/create-orphan'), 
           {
             renewable: this.state.renewable,
             period: this.state.period,
@@ -94,47 +94,47 @@ class CreateTokenForm extends React.Component {
     render() {
       return (
 
-        <div class="tokenForm">
+        <div className="tokenForm">
 
-          <div class="title">Vault: Create orphan token</div>
+          <div className="title">Vault: Create orphan token</div>
 
           <form onSubmit={this.handleSubmit}>
 
-          <div class="section">
-            <div class="sectionTitle">Authentication</div>
+          <div className="section">
+            <div className="sectionTitle">Authentication</div>
 
-            <div class="field">
+            <div className="field">
               <input type="text" placeholder="Username" id="username" value={this.state.username} onChange={this.handleChange} required/>
-              <span class="help-text"></span>
+              <span className="help-text"></span>
             </div>
 
-            <div class="field">
+            <div className="field">
                 <input type="password" placeholder="Password" id="password" value={this.state.password} onChange={this.handleChange} required/>
-                <span class="help-text"></span>
+                <span className="help-text"></span>
             </div>
           </div>
 
-          <div class="section">
+          <div className="section">
 
-            <div class="sectionTitle">Token options</div>
+            <div className="sectionTitle">Token options</div>
 
-            <div class="field">
+            <div className="field">
                 <textarea id="policies" required placeholder="Enter one or more vault token policy names; separated by new lines" value={this.state.policies.join("\n")} onChange={this.handleChange} />
-                <span class="help-text"></span>
+                <span className="help-text"></span>
             </div>
 
-            <div class="select-grid">
+            <div className="select-grid">
 
-                <div class="select-label">Renewable?</div>
-                <div class="select-control">
-                  <select id="renewable" value={this.state.renewable.toString()} onChange={this.handleChange}>
-                    <option value="true">Yes</option>
-                    <option value="false">No</option>
+                <div className="select-label">Renewable?</div>
+                <div className="select-control">
+                  <select id="renewable" onChange={this.handleChange}>
+                    <option value="true" selected={this.state.renewable}>Yes</option>
+                    <option value="false" selected={!this.state.renewable}>No</option>
                   </select>
                 </div>
 
-                <div class="select-label">Period</div>
-                <div class="select-control">
+                <div className="select-label">Period</div>
+                <div className="select-control">
                   <select id="period" value={this.state.period} onChange={this.handleChange}>
                     <option value="1m">1m</option>
                     <option value="5m">5m</option>
@@ -151,8 +151,8 @@ class CreateTokenForm extends React.Component {
 
           { this.state.result != null ? <CreateTokenResults ref={this.createTokenResult}/> : null }
 
-          <div class="controls">
-            <input id="submit" type="submit" value="create token" />
+          <div className="controls">
+            <input className="button" id="submit" type="submit" value="Generate orphan token" />
           </div>
 
         </form>
@@ -175,6 +175,7 @@ class CreateTokenForm extends React.Component {
         status: result.status, 
         statusText: result.statusText, 
         data: result.data,
+        json: JSON.stringify(result.data,undefined, 2),
         success: (result.status === 200 ? true : false),
         token: (result.data ? result.data.token  : null),
         code: (result.data ? result.data.code  : null),
@@ -184,11 +185,16 @@ class CreateTokenForm extends React.Component {
 
     render() {
       return (
-        <div id="results" class="section">
-          Status: {this.state.status}
-          Token: {this.state.token}
-          Code: {this.state.code}
-          Msg: {this.state.msg}
+        <div className={this.state.status === 200 ? "results section section-ok" : "results section section-error"}>
+          
+          <div className="sectionTitle">/token/create-orphan results</div>
+
+          <div className="result-grid">
+            <label className="result-label">Status:</label><label className="result-data">{this.state.status} {this.state.statusText}</label>
+            <label className="result-label">Token:</label><label className="result-data token">{this.state.token}</label>
+            <label className="result-label">Code:</label><label className="result-data">{this.state.code}</label>
+            <label className="result-label">Msg:</label><label className="result-data">{this.state.msg}</label>
+          </div>
         </div>
       )
     }

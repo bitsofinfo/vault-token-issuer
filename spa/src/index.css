@@ -10,8 +10,8 @@ body {
   font-size: 25px;
   letter-spacing: -0.4px;
   word-spacing: 2px;
-  color: #000000;
-  font-weight: 700;
+  color: rgb(34, 104, 255);
+  font-weight: bold;
   text-decoration: none solid rgb(68, 68, 68);
   font-style: normal;
   font-variant: normal;
@@ -28,7 +28,7 @@ body {
 }
 
 .section {
-  background-color: rgba(194, 194, 194, 0.72);
+  background-color: rgba(238, 238, 238, 0.72);
   padding: 3px;
   border: 2px solid rgba(25, 125, 255, 0.72);
   margin: 5px;
@@ -58,7 +58,7 @@ body {
 
 input {
   height: 30px;
-  width: 300px;
+  width: 95%;
   font-size: 15px;
   padding: 5px;
   margin: 0 .25rem;
@@ -81,8 +81,8 @@ select {
 }
 
 textarea {
-  height: 75px;
-  width: 300px;
+  height: 80px;
+  width: 95%;
   font-size: 15px;
   padding: 5px;
   margin: 0 .25rem;
@@ -130,7 +130,7 @@ textarea:required + .help-text::before {
 
 .select-control select option {
   height: 30px;
-  width: 300px;
+  width: 50px;
   font-size: 15px;
   padding: 5px;
   margin: 0 .25rem;
@@ -142,12 +142,56 @@ textarea:required + .help-text::before {
 
 .controls {
   align-items: center;
+  text-align: center;
 }
 
-#results {
+.button {
+  background-color: rgb(34, 104, 255);
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  height:40px
+}
+
+.results {
   background-color: rgba(253, 253, 253, 0.72);
   padding: 3px;
-  border: 4px solid rgba(6, 194, 91, 0.72);
   margin: 5px;
   padding-bottom: 10px;
+}
+
+.section-error {
+  border: 4px solid red;
+}
+
+.section-ok {
+  border: 4px solid rgba(6, 194, 91, 0.72);
+}
+
+
+.result-grid {
+  padding-top:10px;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: [col] 75px [col] 255px ;
+  grid-template-rows: [row] auto [row] auto [row] ;
+  color: #444;
+}
+
+.result-grid .result-label {
+  grid-column: col 1;
+  font-weight: bold;
+  padding-left: 15px;
+  font-size: 15px;
+  vertical-align: top;
+  text-align: right;
+}
+
+.result-grid .result-data {
+  vertical-align: top;
+}
+
+.result-grid .token {
+  font-weight: bold;
+  color: green;
 }

@@ -1,3 +1,4 @@
+//go:generate ./build-spa.sh
 //go:generate go run build_spa_vfsgen.go
 
 package main
@@ -37,7 +38,7 @@ var (
 // the JSON payload we both consume
 // from callers and relay to Vault
 type createTokenPayload struct {
-	Renewable bool     `valid:"required" json:"renewable"`
+	Renewable bool     `json:"renewable"` // valid:required doesn't work on 'false' @see https://github.com/asaskevich/govalidator/issues/256
 	Period    string   `valid:"alphanum,required" json:"period"`
 	Policies  []string `valid:"ascii,required" json:"policies"`
 }
@@ -71,7 +72,7 @@ func main() {
 
 	// load our plugin for the authentication backend
 	if vaultAuthenticator == "ldap" {
-		authenticator = &auth.LdapPlugin{VaultUrl: vaultUrl}
+		authenticator = &auth.LdapPlugin{VaultURL: vaultUrl}
 		log.Info("VaultAuthenticator 'ldap' loaded")
 
 	} else {
