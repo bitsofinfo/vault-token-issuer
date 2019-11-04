@@ -1,5 +1,7 @@
 # vault-token-issuer
 
+[![Build Status](https://travis-ci.org/bitsofinfo/vault-token-issuer.svg?branch=master)](https://travis-ci.org/bitsofinfo/vault-token-issuer)
+
 <img src="docs/spa.png" align="right" height="450">
 
 This project provides a simplified proxy/facade for [Vault's /auth/token/create-orphan API](https://www.vaultproject.io/api/auth/token/index.html).
