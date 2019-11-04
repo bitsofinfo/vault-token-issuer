@@ -12,6 +12,8 @@ Use cases:
 * Limit direct/full exposure to Vault on a network
 * Provide a restricted gateway to Vault's `/auth/token/create-orphan` API
 
+<img src="doc/spa.png" align="right">
+
 ## Basic example
 
 ### Launch the `vault-token-issuer`
@@ -60,13 +62,16 @@ Usage of ./vault-token-issuer:
         Vault url where token API calls will be made. i.e. http(s)://<vault>[:port]
 ```
 
-## SPA
-
-The included gui is implemented in React and available at `/ui` if enabled via `--enable-spa true|false`. More information in the [SPA README](spa/README.md)
-
 ## Building
 
 ```
 go generate
 go build
 ```
+
+## SPA
+
+The included gui is implemented in React and available at `/ui` if enabled via `--enable-spa true|false`. More information in the [SPA README](spa/README.md)
+
+![](doc/spa.png) 
+
