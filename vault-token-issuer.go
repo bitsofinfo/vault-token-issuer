@@ -100,12 +100,14 @@ func main() {
 
 		router.Path("/ui").
 			Methods("GET").
+			Schemes("https").
 			Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				http.Redirect(w, r, "/ui/", http.StatusSeeOther)
 			}))
 
 		router.PathPrefix("/ui/").
 			Methods("GET").
+			Schemes("https").
 			Handler(http.StripPrefix("/ui/",
 				http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 					if r.URL.Path == "/" {
@@ -114,6 +116,7 @@ func main() {
 
 					spaFileServer.ServeHTTP(w, r)
 				})))
+
 	}
 
 	// fire up the http server
