@@ -1,6 +1,6 @@
 # vault-token-issuer
 
-<img src="doc/spa.png" align="right" height="600">
+<img src="doc/spa.png" align="right" height="400">
 
 This project provides a simplified proxy/facade for [Vault's /auth/token/create-orphan API](https://www.vaultproject.io/api/auth/token/index.html).
 
