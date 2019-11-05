@@ -2,6 +2,9 @@ vault-token-issuer
 vault-token-issuer_*
 build_spa_vfsgen
 
+dist/*
+dist/
+
 *.crt
 *.key
 
