@@ -20,7 +20,7 @@ install:
 
 script:  
   - echo $TRAVIS_OS_NAME
-  - echo $TRAVIS_TAG
+  - echo $TRAVIS_TAG 
 
 # calls goreleaser
 deploy:
