@@ -18,8 +18,9 @@ env:
 install:
 - sudo snap install snapcraft --classic
 
-script: echo $TRAVIS_OS_NAME
-script: echo $TRAVIS_TAG
+script: 
+  - echo $TRAVIS_OS_NAME
+  - echo $TRAVIS_TAG
 
 # calls goreleaser
 deploy:
