@@ -66,6 +66,8 @@ Usage of ./vault-token-issuer:
 
 ## Building
 
+Note also see [spa/README](spa/) to setup the SPA prior to building
+
 ```
 go generate
 go build
