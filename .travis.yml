@@ -12,16 +12,8 @@ addons:
     - nodejs
     - npm
 
-services:
-  - docker
-
 env:
 - PATH=/snap/bin:$PATH
-
-before_install:
-  - docker version
-  - docker build -t vault-token-issuer:1 .
-  - docker images
 
 install:
 - sudo snap install snapcraft --classic
