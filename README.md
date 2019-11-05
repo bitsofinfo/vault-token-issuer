@@ -75,3 +75,11 @@ go build
 
 The included gui is implemented in React and available at `/ui` if enabled via `--enable-spa true|false`. More information in the [SPA README](spa/)
 
+## Docker
+
+```
+docker run -p 8443:8443 bitsofinfo/vault-token-issuer:latest \
+      vault-token-issuer \
+      -vault-url https://<yourVaultFqdn> \
+      -vault-authenticator ldap 
+```
