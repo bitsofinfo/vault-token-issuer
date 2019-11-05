@@ -5,8 +5,8 @@ go:
 
 branches:
   only:
-  - master
   - "/^.*$/"
+  - master
 
 addons:
   apt:
