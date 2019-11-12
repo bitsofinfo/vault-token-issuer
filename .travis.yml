@@ -16,13 +16,12 @@ addons:
     - nodejs
     - npm
 
-env:
-  matrix:
-  - PATH=/snap/bin:$PATH
-  - GOMODULE=off
-  - GO111MODULE=off
+env:  
   global:
-    secure: n4PoNRfbGt3aB9qU+S631zhO3PK13QiaiLaChuwitBdxkdU+oyc0lyYCNlOei8boGnIlStZyTKGvn5qfv9yZsL1VNCFIR/9M1JRYdnzgaQ1ZlaHjPQSQaMEPI2e9icSBbNfzEGJ+D/H9+m3fZrE2zmkynO/1/5kzla7eXK9Eixssry8vrf/mFr7Zqtv75/hK1oXp2HZieMqivWJ6A4B7RLyqKnyKGFgqCjm2GrCBTilYYGveAjmLIE+cDTCwLXHp+9bO67c8hxItovTQFpakfdGUN/WxYll5UpAdlR1myX8+mCaP49fYX22uv+GGwxjfZtcfhv+kGeBqwPn9TNd83CmU2luM/J6epWps15qTz+qjh343ODV40a29TS5SVSx30Xa3enhVFwOXFp0FQU59pPof8x+fdiLQaLItg0A7Yo0xbdfBp1rUuKEiUCMcrzTfFges2qp8FpYNCCd40VBifqu5WC6uJ3jZddjpTKg7RyJQEM9MHZ2Di0DBfX+9PwCmRQ70meIkvHMfM6QNaJlwMqcUl7x4bDox3BRuwSA7hu4rMBszgwKoG7/zkuTP7LtkQUkAkCfOIHLZv9M+dyhUbjijeUy8L6n2lH3crsE97+D9AEd09U4J+bSxOzD/5xtLqTwqbR1p1SJZuuEbhW9Cc77UN3XeL2QbzsHCL/SeytY=
+    - PATH=/snap/bin:$PATH
+    - GOMODULE=off
+    - GO111MODULE=off
+    - secure: n4PoNRfbGt3aB9qU+S631zhO3PK13QiaiLaChuwitBdxkdU+oyc0lyYCNlOei8boGnIlStZyTKGvn5qfv9yZsL1VNCFIR/9M1JRYdnzgaQ1ZlaHjPQSQaMEPI2e9icSBbNfzEGJ+D/H9+m3fZrE2zmkynO/1/5kzla7eXK9Eixssry8vrf/mFr7Zqtv75/hK1oXp2HZieMqivWJ6A4B7RLyqKnyKGFgqCjm2GrCBTilYYGveAjmLIE+cDTCwLXHp+9bO67c8hxItovTQFpakfdGUN/WxYll5UpAdlR1myX8+mCaP49fYX22uv+GGwxjfZtcfhv+kGeBqwPn9TNd83CmU2luM/J6epWps15qTz+qjh343ODV40a29TS5SVSx30Xa3enhVFwOXFp0FQU59pPof8x+fdiLQaLItg0A7Yo0xbdfBp1rUuKEiUCMcrzTfFges2qp8FpYNCCd40VBifqu5WC6uJ3jZddjpTKg7RyJQEM9MHZ2Di0DBfX+9PwCmRQ70meIkvHMfM6QNaJlwMqcUl7x4bDox3BRuwSA7hu4rMBszgwKoG7/zkuTP7LtkQUkAkCfOIHLZv9M+dyhUbjijeUy8L6n2lH3crsE97+D9AEd09U4J+bSxOzD/5xtLqTwqbR1p1SJZuuEbhW9Cc77UN3XeL2QbzsHCL/SeytY=
 
 install:
 - sudo snap install snapcraft --classic
